@@ -42,30 +42,24 @@ function _arrayBufferToBase62(buffer: ArrayBuffer, c: number): string {
   return result.padStart(numberMap.get(c)!, '0');
 }
 
-/**
- * Converts any array buffer to base62. 
- */
+/** Converts any array buffer to base62. */
 export function arrayBufferToBase62(buffer: ArrayBuffer): string {
-  let l = buffer.byteLength;
-  let i = 0;
-  let result = '';
+  let l = buffer.byteLength, i = 0, result = '';
   while (l > 0) {
-    let c = l >= N ? N : l
+    let c = l >= N ? N : l;
     let chunk = buffer.slice(i, i + c);
     result += _arrayBufferToBase62(chunk, c);
     i += c;
     l -= c;
   }
-  return result
+  return result;
 }
 
 function _base62ToArrayBuffer(s: string, t: number): ArrayBuffer {
-  let n = 0n;
   try {
-    for (let i = 0; i < s.length; i++) {
-      const digit = BigInt(base62.indexOf(s[i]));
-      n = n * 62n + digit;
-    }
+    let n = 0n;
+    for (let i = 0; i < s.length; i++)
+      n = n * 62n + BigInt(base62.indexOf(s[i]));
     if (n > 2n ** BigInt(t * 8) - 1n)
       throw new Error(`base62ToArrayBuffer: value exceeds ${t * 8} bits.`);
     const buffer = new ArrayBuffer(t);
@@ -74,20 +68,18 @@ function _base62ToArrayBuffer(s: string, t: number): ArrayBuffer {
       view.setUint8(t - i - 1, Number(n & 0xFFn));
     return buffer;
   } catch (e) {
-    console.error("[_base62ToArrayBuffer] Error: ", e); throw (e)
+    throw new Error(`base62ToArrayBuffer: Error, probably not a valid base62 string. [${e}]`);
   }
 }
 
-/**
- * Converts a base62 string to matching ArrayBuffer.
- */
+/** Converts a base62 string to matching ArrayBuffer. */
 export function base62ToArrayBuffer(s: string): ArrayBuffer {
   if (!b62regex.test(s)) throw new Error('base62ToArrayBuffer32: must be alphanumeric (0-9A-Za-z).');
-  let i = 0, j = 0, c
-  let result = new Uint8Array(s.length); // more than we need
+  let i = 0, j = 0, c;
+  let result = new Uint8Array(s.length * 6 / 8);
   try {
     while (i < s.length) {
-      c = (s.length - i) >= maxChunk ? maxChunk : s.length - i
+      c = Math.min(s.length - i, maxChunk);
       let chunk = s.slice(i, i + c);
       const newBuf = new Uint8Array(_base62ToArrayBuffer(chunk, inverseNumberMap.get(c)!))
       result.set(newBuf, j);
@@ -96,6 +88,6 @@ export function base62ToArrayBuffer(s: string): ArrayBuffer {
     }
     return result.buffer.slice(0, j);
   } catch (e) {
-    console.error("[base62ToArrayBuffer] Error:", e); throw (e)
+    throw new Error(`base62ToArrayBuffer: Error, possibly not a valid base62 string. [${e}]`);
   }
 }
