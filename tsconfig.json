@@ -8,7 +8,7 @@
       "forceConsistentCasingInFileNames": true, /* Disallow inconsistently-cased references to the same file. */
       "isolatedModules": true,      /* Transpile each file as a separate module (similar to 'ts.transpileModule'). */
       "lib": ["esnext", "dom"],     /* Specify library files to be included in the compilation. */
-      "module": "esnext",           /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */
+      "module": "commonjs",           /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */
       "noImplicitAny": true,        /* Raise error on expressions and declarations with an implied 'any' type. */
       "noImplicitReturns": true,    /* Report error when not all code paths in function return a value. */
       "noImplicitThis": true,       /* Raise error on 'this' expressions with an implied 'any' type. */
@@ -29,3 +29,24 @@
     "exclude": [ "build", "dist" ]
   }
   
+
+// // quick and dirty node target
+// {
+//     "compilerOptions": {
+//       "target": "es2020",           // Or a higher target like ES2018, depending on your Node.js version
+//       "module": "CommonJS",      // Important for Node.js compatibility
+//       "outDir": "./lib",         // Output directory for compiled files
+//       "rootDir": "./src",        // Root directory of your TypeScript files
+//       "strict": true,            // Enables strict type-checking options
+//       "esModuleInterop": true,   // Enables compatibility with default imports from CommonJS modules
+//       "declaration": true,       // Generates corresponding '.d.ts' file for your library
+//       "skipLibCheck": true       // Skip type checking of declaration files
+//     },
+//     "include": [
+//       "src/**/*"                 // Include all files in the src directory
+//     ],
+//     "exclude": [
+//       "node_modules",            // Exclude the node_modules directory
+//       "**/*.test.ts"             // Exclude test files
+//     ]
+//   }

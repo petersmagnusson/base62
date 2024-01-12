@@ -1,6 +1,6 @@
 {
   "name": "base62",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "base62 encoding in Typescript",
   "main": "base62.js",
   "repository": "https://petersmagnusson@github.com/petersmagnusson/base62.git",

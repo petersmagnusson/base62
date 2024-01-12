@@ -17,48 +17,48 @@
 
     */
 
-
-// Define the base62 dictionary (alphanumeric)
-// We want the same sorting order as ASCII, so we go with 0-9A-Za-z
 export const base62 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-const b62regex = /^[0-9A-Za-z]*$/;
+export const b62regex = /^[0-9A-Za-z]*$/;
 
-const intervals = new Map<number, number>([
-  [32, 43],
-  [16, 22],
-  [8, 11],
-  [4, 6],
-]);
-const inverseIntervals = new Map(Array.from(intervals, ([key, value]) => [value, key]));
-const inverseKeys = Array.from(inverseIntervals.keys()).sort((a, b) => a - b);
+const N = 32; // max chunk size, design point. 
+
+function generateMap(N: number): Map<number, number> {
+  const map = new Map<number, number>();
+  for (let X = 1; X <= N; X += 1)
+    map.set(X, Math.ceil((X * 8) / Math.log2(62)));
+  return map;
+}
+
+const numberMap = generateMap(N);
+const inverseNumberMap = new Map(Array.from(numberMap, ([key, value]) => [value, key]));
+const maxChunk = numberMap.get(N)!;
 
 function _arrayBufferToBase62(buffer: ArrayBuffer, c: number): string {
-  if (buffer.byteLength !== c || !intervals.has(c)) throw new Error("[arrayBufferToBase62] Decoding error")
   let result = '';
   for (let n = BigInt('0x' + Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join(''));
     n > 0n;
     n = n / 62n)
     result = base62[Number(n % 62n)] + result;
-  return result.padStart(intervals.get(c)!, '0');
+  return result.padStart(numberMap.get(c)!, '0');
 }
 
 /**
  * Converts any array buffer to base62. Size must be a multiple of 4 bytes.
  */
 export function arrayBufferToBase62(buffer: ArrayBuffer): string {
-  let L = buffer.byteLength, i = 0, result = '';
-  if (L % 4 !== 0) throw new Error('arrayBufferToBase62: buffer size must be a multiple of 4 bytes.');
-  while (L > 0) {
-    let c = 2 ** Math.min(Math.floor(Math.log2(L)), 5); // next chunk
+  let l = buffer.byteLength;
+  let i = 0;
+  let result = '';
+  while (l > 0) {
+    let c = l >= N ? N : l
     let chunk = buffer.slice(i, i + c);
     result += _arrayBufferToBase62(chunk, c);
     i += c;
-    L -= c;
+    l -= c;
   }
   return result
 }
 
-// t is number of (8-bit) bytes and either 32, 16, 8, or 4
 function _base62ToArrayBuffer(s: string, t: number): ArrayBuffer {
   let n = 0n;
   try {
@@ -66,15 +66,12 @@ function _base62ToArrayBuffer(s: string, t: number): ArrayBuffer {
       const digit = BigInt(base62.indexOf(s[i]));
       n = n * 62n + digit;
     }
-    if (n > 2n ** BigInt(t * 8) - 1n) // check overflow
+    if (n > 2n ** BigInt(t * 8) - 1n)
       throw new Error(`base62ToArrayBuffer: value exceeds ${t * 8} bits.`);
     const buffer = new ArrayBuffer(t);
     const view = new DataView(buffer);
-    for (let i = 0; i < (t / 4); i++) {
-      const uint32 = Number(BigInt.asUintN(32, n));
-      view.setUint32(((t / 4) - i - 1) * 4, uint32);
-      n = n >> 32n;
-    }
+    for (let i = 0; i < t; i++, n >>= 8n)
+      view.setUint8(t - i - 1, Number(n & 0xFFn));
     return buffer;
   } catch (e) {
     console.error("[_base62ToArrayBuffer] Error: ", e); throw (e)
@@ -82,20 +79,17 @@ function _base62ToArrayBuffer(s: string, t: number): ArrayBuffer {
 }
 
 /**
- * Converts a base62 string to matching ArrayBuffer. The original (and hence resulting)
- * array buffer size must have been a multiple of 4 bytes.
+ * Converts a base62 string to matching ArrayBuffer.
  */
 export function base62ToArrayBuffer(s: string): ArrayBuffer {
   if (!b62regex.test(s)) throw new Error('base62ToArrayBuffer32: must be alphanumeric (0-9A-Za-z).');
-  let i = 0, j = 0, c, oldC = 43
+  let i = 0, j = 0, c
   let result = new Uint8Array(s.length); // more than we need
   try {
     while (i < s.length) {
-      c = inverseKeys.filter(num => num <= (s.length - i)).pop()!;
-      if (oldC < 43 && c >= oldC) throw new Error('invalid b62 (original size was not a multiple of 4 bytes)')
-      oldC = c // decoding check: other than with 43, should be decreasing
+      c = (s.length - i) >= maxChunk ? maxChunk : s.length - i
       let chunk = s.slice(i, i + c);
-      const newBuf = new Uint8Array(_base62ToArrayBuffer(chunk, inverseIntervals.get(c)!))
+      const newBuf = new Uint8Array(_base62ToArrayBuffer(chunk, inverseNumberMap.get(c)!))
       result.set(newBuf, j);
       i += c;
       j += newBuf.byteLength
@@ -105,4 +99,3 @@ export function base62ToArrayBuffer(s: string): ArrayBuffer {
     console.error("[base62ToArrayBuffer] Error:", e); throw (e)
   }
 }
-

@@ -14,33 +14,31 @@ function generateRandomArrayBuffer(length: number) {
     return buffer.buffer;
 }
 
-function generateRandomBufferSize() {
-    // must be multiple of 32 bits
-    return Math.floor(Math.random() * 32) * 4;
+// Random buffer sizes 0..511
+function generateRandomBufferSize(range: number = 512) {
+    return Math.floor(Math.random() * range);
 }
 
 // Compare two array buffers for equality
 function compareArrayBuffers(buffer1: ArrayBuffer, buffer2: ArrayBuffer) {
-    if (buffer1.byteLength !== buffer2.byteLength) {
+    if (buffer1.byteLength !== buffer2.byteLength)
         return false;
-    }
     const view1 = new DataView(buffer1);
     const view2 = new DataView(buffer2);
     for (let i = 0; i < buffer1.byteLength; i++) {
-        if (view1.getUint8(i) !== view2.getUint8(i)) {
+        if (view1.getUint8(i) !== view2.getUint8(i))
             return false;
-        }
     }
     return true;
 }
 
 // Test the arrayBufferToBase62 function with random inputs
 const GENERATE_TEST_CASES = false; // set to true to also output test cases to console
-function testarrayBufferToBase62(numTests: number) {
+function testarrayBufferToBase62(numTests: number, maxBufSize: number = 512) {
     let testsPassed = 0;
     if (GENERATE_TEST_CASES) console.log("export const testCases = [");
     for (let i = 0; i < numTests; i++) {
-        const n = generateRandomBufferSize();
+        const n = generateRandomBufferSize(maxBufSize);
         const buffer = generateRandomArrayBuffer(n);
         const base62String = arrayBufferToBase62(buffer);
         if (DEBUG) console.log("Test: array buffer becomes ('" + base62String + "')");
@@ -50,7 +48,10 @@ function testarrayBufferToBase62(numTests: number) {
             if (DEBUG) console.log(`Passing test ...`)
             testsPassed++;
         } else {
-            console.warn(`testarrayBufferToBase62: Test ${i + 1} failed. Expected, but got`, buffer, newBuffer);
+            if (maxBufSize <= 512)
+                console.warn(`testarrayBufferToBase62: Test ${i + 1} failed. Expected, but got`, buffer, newBuffer);
+            else
+                console.warn(`testarrayBufferToBase62: Test ${i + 1} failed. Buffers differed.`);
         }
     }
     if (GENERATE_TEST_CASES) console.log("];");
@@ -85,19 +86,31 @@ async function runTestCasesFromFile(fileName: string) {
     console.log(`// runTestCasesFromFile: ${testsPassed} out of ${testCases.testCases.length * 2} tests passed.`);
 }
 
-function runTests(reps: number) {
+function runTests(reps: number, bigReps: number = 10) {
+    // random (each time):
+    testarrayBufferToBase62(reps);
+    // test large buffers
+    testarrayBufferToBase62(bigReps, 256 * 1024);
     // deterministic:
     runTestCasesFromFile("./set.01.ts")
     runTestCasesFromFile("./set.02.ts")
     runTestCasesFromFile("./set.03.ts")
     runTestCasesFromFile("./set.04.ts")
-    // random (each time):
-    testarrayBufferToBase62(reps);
 }
 
 const REP = 20000;
 
-Deno.test("basic SB384 tests", async () => {
+Deno.test("base62 main test", async () => {
     runTests(REP);
 });
 runTests(REP);
+
+// some manual sanity checks
+console.log("=========")
+console.log("Sanity checks:");
+console.log(`'${arrayBufferToBase62(new Uint8Array([]).buffer)}'`);
+console.log(`'${arrayBufferToBase62(new Uint8Array([1]).buffer)}'`);
+console.log(`'${arrayBufferToBase62(new Uint8Array([1, 2]).buffer)}'`);
+console.log(`'${arrayBufferToBase62(new Uint8Array([1, 2, 3]).buffer)}'`);
+console.log(`'${arrayBufferToBase62(new Uint8Array([0, 0, 0, 0]).buffer)}'`);
+console.log("=========")
