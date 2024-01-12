@@ -43,7 +43,7 @@ function _arrayBufferToBase62(buffer: ArrayBuffer, c: number): string {
 }
 
 /**
- * Converts any array buffer to base62. Size must be a multiple of 4 bytes.
+ * Converts any array buffer to base62. 
  */
 export function arrayBufferToBase62(buffer: ArrayBuffer): string {
   let l = buffer.byteLength;
