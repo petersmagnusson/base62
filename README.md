@@ -1,25 +1,22 @@
 # base62
 
-base62 encoding and decoding. Typescript implementation.
+base62 (A-Za-z0-9) encoding and decoding. Typescript implementation.
 
-'base62' encodes binary data in (pure) alphanumeric format (0-9A-Za-z).
+For several smaller sizes, base62 encoding is the same length as base64,
+including many sizes relevant in crypto contexts.
 
-The algorithm has no restrictions on the input. The resulting length is
+This algorithm has no restrictions on the input. The resulting length is
 only a function of the length of the input (not the contents).
 
-The algorithm is close to theoretical optimum for b62 - eg if the entire
-binary content were treated as one integer: for input sizes less than
-812 bytes, it is optimal; for input sizes 812-7051 bytes, it is at most
-one character longer than theoretical optimum.
+The algorithm is close to theoretical optimum for base62 - eg if the entire
+binary content were treated as a single integer. For input sizes less than
+227 bytes, it is optimal; if we restrict input sizes to be a multiple of
+4 bytes (32 bits), then for sizes up to 812 bytes it is optimal, and for
+sizes up to 7051 bytes it is behind optimum by at most one character.
 
-For several smaller sizes the encoding is the same length as base64.
-
-Performance is much worse than base64, and this format is not yet suitable
-for large amounts of data.
-
-The code is consistently big-endian both in encoding and decoding.
-
-## Usage
+Performance of base62 is generally much worse than base64. This
+implementation is fairly fast, but the focus has been on optimality
+of encoding, in particular for smaller sizes, and correctness.
 
 ```typescript
 
@@ -30,15 +27,17 @@ The code is consistently big-endian both in encoding and decoding.
 
 ```
 
+The algorithm encodes and decodes data using a base62 encoding scheme, with a defined chunk size of 32 bytes. Each chunk, up to 32 bytes, is first converted into a BigInt (eg up to 2^256-1 in size), and then iteratively divided by 62 to encode it into a base62 string, zero-padded with the character representing zero in our base62 dictionary ('A'). We maintain maps (M and invM) to correlate the length of byte sequences with their corresponding base62 string lengths, and vice versa. The algorithm operates in big-endian format. It includes checks to validate the correctness of the base62 strings, ensuring they are valid outputs of the base62 encoding process.
+
 ## Efficiency (briefly)
 
-Each b62 character represents log2(62) or about 5.9542 bits. In principle
+Generally for base62, each character represents log2(62) or about 5.9542 bits. In principle
 this would require 0.8% more characters than base64, but in practice
 there is often no difference, in particular in crypto contexts.
 
 Notably the resulting encoding lengths are the same for 128, 256, and 512 bits.
 Base64 has a "sweetspot" with 192 bits (and multiples thereof such as 384) since
-log2(64) has 3 as a prime factor. But for multiples of 192 up to 4x192, the
+log2(64) has 3 as a prime factor. But even then, for multiples of 192 up to 4x192, the
 difference is only one character.
 
 If we look at a larger set of common key sizes (such as 128, 160, 192, 224, 256,
@@ -48,9 +47,10 @@ this list 192 and 384), encoding lengths are same.
 This is because, curiously, 43xlog2(62) is 256.03, an inefficiency of only 1/8000,
 whereas 43xlog2(64) is 258.00, an inefficiency of 1/64, allowing b62 to "catch up".
 
-The algorithm chunks to 32 bytes or smaller. This dramatically improves performance
-compared to larger chunks, with minimal impact on quality - in fact you would
-need to go to chunk sizes well above 512 bytes to see much difference.
+Hence the chunking to 32 bytes or smaller. This dramatically improves performance
+compared to larger chunks, of course, and with minimal impact on quality - in fact you would
+need to go to chunk sizes well above 512 bytes to see much difference. Conversely,
+smaller chunks lead to significantly worse encoding.
 
 ## Issues with Base64
 
@@ -80,7 +80,7 @@ Differences include:
 * Few (if any) approaches appear to be close to the theoretical optimum
   for base62 (at least from the limited testing we've done).
 
-Implementations we are currently looking for comparisons include
+Implementations we are currently looking at for comparison include
 (this list will grow as we find more, then hopefully curated down
 to keep 'canonical' implementations for different approaches):
 
@@ -99,11 +99,21 @@ to keep 'canonical' implementations for different approaches):
    6240: 8393 /  8408    / 8428 (optimum is 8385)
    5280: 7101 /  7114.5  / 7129 (optimum is 7138)
 
+* https://github.com/suminb/base62
+  Variable results, not guaranteed optimal. For example, byte length 32
+  results in 42, 43, or 44 characters.
+
 * https://github.com/keybase/saltpack/tree/master/encoding/basex
 
 * https://github.com/eknkc/basex
 
 * https://github.com/KvanTTT/BaseNcoding
+
+* https://github.com/seruco/base62
+
+* https://github.com/jxskiss/base62
+
+
 
 ## Footnotes
   
