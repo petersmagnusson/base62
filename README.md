@@ -63,11 +63,10 @@ that are in circulation are not compatible.
 
 Differences include:
 
-* The character set used, or rather, the order of the characters. There are
-  three variants in circulation: the Base64 ordering (A-Za-z0-9), lexicographic
-  (ASCII) order (0-9A-Za-z), and finally (0-9a-zA-Z) from "BaseN" contexts,
-  eg decoders that support any base (**). We use A-Za-z0-9 in order to align
-  with Base32 and Base64 standards.
+* The character set used, or rather, the order of the characters. Unfortunately,
+  four variations are in circulation: Base64 ordering (A-Za-z0-9), lexicographic
+  (ASCII) order (0-9A-Za-z), "BaseN" (**) ordering (0-9a-zA-Z), and finally
+  but least commonly (a-zA-Z0-9).
 
 * Many "base62" implementations only encode a number, not an arbitrary
   binary object.
