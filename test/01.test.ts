@@ -72,7 +72,7 @@ async function runTestCasesFromFile(fileName: string) {
             if (DEBUG) console.log(`Passing test ...`)
             testsPassed++;
         } else {
-            console.warn(`testarrayBufferToBase62: Test ${i + 1} failed. Expected, but got`, buffer, newBuffer);
+            console.warn(`runTestCasesFromFile: Test ${i + 1} failed. Expected, but got`, buffer, newBuffer);
         }
         // then test conversion from buffer to string
         const newBase62String = arrayBufferToBase62(buffer.buffer);
@@ -80,13 +80,15 @@ async function runTestCasesFromFile(fileName: string) {
             if (DEBUG) console.log(`Passing test ...`)
             testsPassed++;
         } else {
-            console.warn(`testarrayBufferToBase62: Test ${i + 1} failed. Expected, but got`, base62String, newBase62String);
+            console.warn(`runTestCasesFromFile: Test ${i + 1} failed. Expected, but got`, base62String, newBase62String);
         }
     }
     console.log(`// runTestCasesFromFile: ${testsPassed} out of ${testCases.testCases.length * 2} tests passed.`);
 }
 
 async function runInvalidBase62StringTestCasesFromFile(fileName: string) {
+    console.log(`// runInvalidBase62StringTestCasesFromFile: ${fileName}`)
+
     const testCases = await import(fileName);
     let testsPassed = 0;
     for (let i = 0; i < testCases.illegaseBase62strings.length; i++) {
@@ -135,7 +137,8 @@ function findIllegalBase62String() {
     if (j == 0) console.log(`// Failed to find illegal base62 string, tried ${i} times.`);
 }
 
-function runTests(reps: number, bigReps: number = 10) {
+async function runTests(reps: number, bigReps: number = 10) {
+    console.log("// ========= runTests() =========")
     // random (each time):
     testarrayBufferToBase62(reps);
 
@@ -143,13 +146,13 @@ function runTests(reps: number, bigReps: number = 10) {
     testarrayBufferToBase62(bigReps, 256 * 1024);
 
     // deterministic:
-    runTestCasesFromFile("./set.01.ts")
-    runTestCasesFromFile("./set.02.ts")
-    runTestCasesFromFile("./set.03.ts")
-    runTestCasesFromFile("./set.04.ts")
+    await runTestCasesFromFile("./set.01.ts")
+    await runTestCasesFromFile("./set.02.ts")
+    await runTestCasesFromFile("./set.03.ts")
+    await runTestCasesFromFile("./set.04.ts")
 
     // these test cases should all throw "Invalid Base62 string."
-    runInvalidBase62StringTestCasesFromFile("./error.set.01.ts")
+    await runInvalidBase62StringTestCasesFromFile("./error.set.01.ts")
 
     // some manual sanity checks
     console.log("=========")
@@ -166,7 +169,11 @@ function runTests(reps: number, bigReps: number = 10) {
 const REP = 20000;
 
 Deno.test("base62 main test", async () => {
-    runTests(REP);
+    await runTests(REP);
 });
-runTests(REP);
 
+// uncomment to run from command line
+// runTests(REP);
+
+// this sort of thing is what generates the test files
+// testarrayBufferToBase62(100, 256);

@@ -17,8 +17,9 @@
 
     */
 
-export const base62 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+export const base62 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 export const b62regex = /^[0-9A-Za-z]*$/;
+const base62zero = base62[0]; // our padding value
 
 const N = 32; // max chunk size, design point. 
 
@@ -28,7 +29,7 @@ for (let X = 1; X <= N; X++) {
   M.set(X, Y);
   invM.set(Y, X);
 }
-const maxChunk = M.get(N)!;
+const maxChunk = M.get(N)!; // this will be 43
 
 function _arrayBufferToBase62(buffer: Uint8Array, c: number): string {
   let result = '', n = 0n;
@@ -36,7 +37,7 @@ function _arrayBufferToBase62(buffer: Uint8Array, c: number): string {
     n = (n << 8n) | BigInt(byte);
   for (; n > 0n; n = n / 62n)
     result = base62[Number(n % 62n)] + result;
-  return result.padStart(M.get(c)!, '0');
+  return result.padStart(M.get(c)!, base62zero);
 }
 
 /** Converts any array buffer to base62. */
@@ -53,8 +54,10 @@ export function arrayBufferToBase62(buffer: ArrayBuffer | Uint8Array): string {
 function _base62ToArrayBuffer(s: string, t: number): Uint8Array {
   try {
     let n = 0n, buffer = new Uint8Array(t);
+
     for (let i = 0; i < s.length; i++)
       n = n * 62n + BigInt(base62.indexOf(s[i]));
+
     if (n > 2n ** BigInt(t * 8) - 1n)
       throw new Error('base62ToArrayBuffer: Invalid Base62 string.'); // exceeds (t * 8) bits
     for (let i = t - 1; i >= 0; i--, n >>= 8n)

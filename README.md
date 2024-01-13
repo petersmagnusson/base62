@@ -63,9 +63,11 @@ that are in circulation are not compatible.
 
 Differences include:
 
-* The character set used (0-9A-Za-z vs 0-9a-zA-Z). We use the former, since
-  that corresponds to sorting order in ASCII, but some implementations use
-  the latter.
+* The character set used, or rather, the order of the characters. There are
+  three variants in circulation: the Base64 ordering (A-Za-z0-9), lexicographic
+  (ASCII) order (0-9A-Za-z), and finally (0-9a-zA-Z) from "BaseN" contexts,
+  eg decoders that support any base (**). We use A-Za-z0-9 in order to align
+  with Base32 and Base64 standards.
 
 * Many "base62" implementations only encode a number, not an arbitrary
   binary object.
@@ -78,7 +80,9 @@ Differences include:
 * Few (if any) approaches appear to be close to the theoretical optimum
   for base62 (at least from the limited testing we've done).
 
-Implementations we are currently looking for comparisons include:
+Implementations we are currently looking for comparisons include
+(this list will grow as we find more, then hopefully curated down
+to keep 'canonical' implementations for different approaches):
 
 * https://github.com/marksalpeter/token/tree/master/v2 - token/uin64 only
 
@@ -99,12 +103,29 @@ Implementations we are currently looking for comparisons include:
 
 * https://github.com/eknkc/basex
 
+* https://github.com/KvanTTT/BaseNcoding
+
+## Footnotes
   
 (*) Variable length output means that it's possible some inputs will
 result encodings that are shorter than what is 'theoretically possible'.
 Since binary data in these encoding contexts are typically 'random',
 taking any sort of compression approach for base62 is a bit misguided.
-  
+
+(**) 'BaseN' approaches will prefer to pick 'less ambiguous' characters,
+and in that contexts lowercase is considered preferable. Of course, base62
+is precisely the point on that continuum where both lower and upper case
+are included, and no additional symbols beyond alphanumeric. But to our
+knowledge, common 'baseN' code do not 'catch' this special case for base62.
+The Base64 ordered version of Base62 is sometimes referred to as 'truncated
+'base64'. To help clarify things, Wikipedia has chimed in and kept changing
+the order of the characters in their article on base62. The first table
+added to the 'base62' article was in 2020, and that showed A-Za-z0-9.
+then in 2021 it was changed to 0-9A-Za-z, then some edit wars and it was
+changed back and forth a few times, eventually back to the current
+0-9a-zA-Z, at no point does the article appear to have mentioned that
+there are in fact multiple versions and no standard.
+
 ## History
 
 Separate document will be added.
