@@ -22,72 +22,59 @@ export const b62regex = /^[0-9A-Za-z]*$/;
 
 const N = 32; // max chunk size, design point. 
 
-function generateMap(N: number): Map<number, number> {
-  const map = new Map<number, number>();
-  for (let X = 1; X <= N; X += 1)
-    map.set(X, Math.ceil((X * 8) / Math.log2(62)));
-  return map;
+const M = new Map<number, number>(), invM = new Map<number, number>();
+for (let X = 1; X <= N; X++) {
+  const Y = Math.ceil((X * 8) / Math.log2(62));
+  M.set(X, Y);
+  invM.set(Y, X);
 }
+const maxChunk = M.get(N)!;
 
-const numberMap = generateMap(N);
-const inverseNumberMap = new Map(Array.from(numberMap, ([key, value]) => [value, key]));
-const maxChunk = numberMap.get(N)!;
-
-function _arrayBufferToBase62(buffer: ArrayBuffer, c: number): string {
-  let result = '';
-  for (let n = BigInt('0x' + Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join(''));
-    n > 0n;
-    n = n / 62n)
+function _arrayBufferToBase62(buffer: Uint8Array, c: number): string {
+  let result = '', n = 0n;
+  for (const byte of buffer)
+    n = (n << 8n) | BigInt(byte);
+  for (; n > 0n; n = n / 62n)
     result = base62[Number(n % 62n)] + result;
-  return result.padStart(numberMap.get(c)!, '0');
+  return result.padStart(M.get(c)!, '0');
 }
 
 /** Converts any array buffer to base62. */
-export function arrayBufferToBase62(buffer: ArrayBuffer): string {
-  let l = buffer.byteLength, i = 0, result = '';
-  while (l > 0) {
-    let c = l >= N ? N : l;
-    let chunk = buffer.slice(i, i + c);
-    result += _arrayBufferToBase62(chunk, c);
-    i += c;
-    l -= c;
+export function arrayBufferToBase62(buffer: ArrayBuffer | Uint8Array): string {
+  const buf = buffer instanceof ArrayBuffer ? new Uint8Array(buffer) : buffer
+  let result = '';
+  for (let l = buf.byteLength, i = 0, c; l > 0; i += c, l -= c) {
+    c = l >= N ? N : l;
+    result += _arrayBufferToBase62(buf.slice(i, i + c), c);
   }
   return result;
 }
 
-function _base62ToArrayBuffer(s: string, t: number): ArrayBuffer {
+function _base62ToArrayBuffer(s: string, t: number): Uint8Array {
   try {
-    let n = 0n;
+    let n = 0n, buffer = new Uint8Array(t);
     for (let i = 0; i < s.length; i++)
       n = n * 62n + BigInt(base62.indexOf(s[i]));
     if (n > 2n ** BigInt(t * 8) - 1n)
-      throw new Error(`base62ToArrayBuffer: value exceeds ${t * 8} bits.`);
-    const buffer = new ArrayBuffer(t);
-    const view = new DataView(buffer);
-    for (let i = 0; i < t; i++, n >>= 8n)
-      view.setUint8(t - i - 1, Number(n & 0xFFn));
+      throw new Error('base62ToArrayBuffer: Invalid Base62 string.'); // exceeds (t * 8) bits
+    for (let i = t - 1; i >= 0; i--, n >>= 8n)
+      buffer[i] = Number(n & 0xFFn);
     return buffer;
   } catch (e) {
-    throw new Error(`base62ToArrayBuffer: Error, probably not a valid base62 string. [${e}]`);
+    throw new Error('base62ToArrayBuffer: Invalid Base62 string.'); // 'NaN' popped up
   }
 }
 
 /** Converts a base62 string to matching ArrayBuffer. */
 export function base62ToArrayBuffer(s: string): ArrayBuffer {
   if (!b62regex.test(s)) throw new Error('base62ToArrayBuffer32: must be alphanumeric (0-9A-Za-z).');
-  let i = 0, j = 0, c;
-  let result = new Uint8Array(s.length * 6 / 8);
   try {
-    while (i < s.length) {
+    let j = 0, result = new Uint8Array(s.length * 6 / 8); // we know we're less than 6
+    for (let i = 0, c, newBuf; i < s.length; i += c, j += newBuf.byteLength) {
       c = Math.min(s.length - i, maxChunk);
-      let chunk = s.slice(i, i + c);
-      const newBuf = new Uint8Array(_base62ToArrayBuffer(chunk, inverseNumberMap.get(c)!))
+      newBuf = _base62ToArrayBuffer(s.slice(i, i + c), invM.get(c)!)
       result.set(newBuf, j);
-      i += c;
-      j += newBuf.byteLength
     }
     return result.buffer.slice(0, j);
-  } catch (e) {
-    throw new Error(`base62ToArrayBuffer: Error, possibly not a valid base62 string. [${e}]`);
-  }
+  } catch (e) { throw e; }
 }

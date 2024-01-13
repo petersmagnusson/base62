@@ -2,7 +2,7 @@
 
 //  (c) 2023-2024, 384 (tm) Inc.
 
-import { arrayBufferToBase62, base62ToArrayBuffer } from '../src/base62.ts';
+import { arrayBufferToBase62, base62ToArrayBuffer, base62 } from '../src/base62.ts';
 
 const DEBUG = false
 
@@ -86,16 +86,81 @@ async function runTestCasesFromFile(fileName: string) {
     console.log(`// runTestCasesFromFile: ${testsPassed} out of ${testCases.testCases.length * 2} tests passed.`);
 }
 
+async function runInvalidBase62StringTestCasesFromFile(fileName: string) {
+    const testCases = await import(fileName);
+    let testsPassed = 0;
+    for (let i = 0; i < testCases.illegaseBase62strings.length; i++) {
+        const testCase = testCases.illegaseBase62strings[i];
+        try {
+            const newBuffer = base62ToArrayBuffer(testCase);
+            console.warn(`runInvalidBase62StringTestCasesFromFile: Test ${i + 1} failed. Expected error, but got`, newBuffer);
+        } catch (e) {
+            if (DEBUG) console.log(`Passing test ...`)
+            if (e.message.indexOf("Invalid Base62 string") < 0) {
+                console.error(`runInvalidBase62StringTestCasesFromFile: Test ${i + 1} failed. Expected error message 'Invalid Base62 string.', but got`, e.message)
+                throw new Error("Invalid string test failed.")
+            }
+            testsPassed++;
+        }
+    }
+    console.log(`// runInvalidBase62StringTestCasesFromFile: ${testsPassed} out of ${testCases.illegaseBase62strings.length} tests passed.`);
+}
+
+// Generate a random base62 string
+function generateRandomBase62String(length: number) {
+    let result = '';
+    for (let i = 0; i < length; i++)
+        result += base62[Math.floor(Math.random() * 62)];
+    return result;
+}
+
+// used to generate test cases for invalid base62 strings
+function findIllegalBase62String() {
+    console.log("export const illegaseBase62strings = [")
+    let i = 0, j = 0, k = 0;
+    while (i++ < 100000, j < 20) { // sanity stop, plus at most j strings
+        const s = generateRandomBase62String(generateRandomBufferSize());
+        try {
+            const buf = base62ToArrayBuffer(s);
+            k += buf.byteLength;
+        } catch (e) {
+            // console.log(`Found illegal base62 string '${s}'`);
+            // return;
+            console.log(`    "${s}",`);
+            j++;
+        }
+    }
+    console.log("];")
+    console.log(`// Found ${j} illegal base62 strings, total length ${k} bytes of buffer in valid strings.`)
+    if (j == 0) console.log(`// Failed to find illegal base62 string, tried ${i} times.`);
+}
+
 function runTests(reps: number, bigReps: number = 10) {
     // random (each time):
     testarrayBufferToBase62(reps);
+
     // test large buffers
     testarrayBufferToBase62(bigReps, 256 * 1024);
+
     // deterministic:
     runTestCasesFromFile("./set.01.ts")
     runTestCasesFromFile("./set.02.ts")
     runTestCasesFromFile("./set.03.ts")
     runTestCasesFromFile("./set.04.ts")
+
+    // these test cases should all throw "Invalid Base62 string."
+    runInvalidBase62StringTestCasesFromFile("./error.set.01.ts")
+
+    // some manual sanity checks
+    console.log("=========")
+    console.log("Sanity checks:");
+    console.log(`'${arrayBufferToBase62(new Uint8Array([]).buffer)}'`);
+    console.log(`'${arrayBufferToBase62(new Uint8Array([1]).buffer)}'`);
+    console.log(`'${arrayBufferToBase62(new Uint8Array([1, 2]).buffer)}'`);
+    console.log(`'${arrayBufferToBase62(new Uint8Array([1, 2, 3]).buffer)}'`);
+    console.log(`'${arrayBufferToBase62(new Uint8Array([0, 0, 0, 0]).buffer)}'`);
+    console.log("=========")
+
 }
 
 const REP = 20000;
@@ -105,12 +170,3 @@ Deno.test("base62 main test", async () => {
 });
 runTests(REP);
 
-// some manual sanity checks
-console.log("=========")
-console.log("Sanity checks:");
-console.log(`'${arrayBufferToBase62(new Uint8Array([]).buffer)}'`);
-console.log(`'${arrayBufferToBase62(new Uint8Array([1]).buffer)}'`);
-console.log(`'${arrayBufferToBase62(new Uint8Array([1, 2]).buffer)}'`);
-console.log(`'${arrayBufferToBase62(new Uint8Array([1, 2, 3]).buffer)}'`);
-console.log(`'${arrayBufferToBase62(new Uint8Array([0, 0, 0, 0]).buffer)}'`);
-console.log("=========")

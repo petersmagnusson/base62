@@ -17,6 +17,8 @@ For several smaller sizes the encoding is the same length as base64.
 Performance is much worse than base64, and this format is not yet suitable
 for large amounts of data.
 
+The code is consistently big-endian both in encoding and decoding.
+
 ## Usage
 
 ```typescript
