@@ -84,7 +84,6 @@ to keep 'canonical' implementations for different approaches):
 * https://github.com/glowfall/base62 - variable length and non-optimal results.
   Some examples (results are formatted as bufferSize:min/avg/max):
 
-```text
      16:   22 /    22.01 /   23 (optimum is   22)
      32:   43 /    43.5  /   45 (optimum is   43)
      40:   54 /    54.24 /   56 (optimum is   54)
