@@ -2,23 +2,34 @@ _NOTE: this is work/design in progress, please feel free to reach out with feedb
 
 # base62
 
-base62 (A-Za-z0-9) encoding and decoding. Typescript implementation.
-
-For several smaller sizes, base62 encoding is the same length as base64,
-including many sizes relevant in crypto contexts.
+base62 ``[0-9A-Za-z]`` encoding and decoding. Typescript implementation.
 
 This algorithm has no restrictions on the input. The resulting length is
-only a function of the length of the input (not the contents).
-
-The algorithm is close to theoretical optimum for base62 - eg if the entire
-binary content were treated as a single integer. For input sizes less than
-227 bytes, it is optimal; if we restrict input sizes to be a multiple of
-4 bytes (32 bits), then for sizes up to 812 bytes it is optimal, and for
-sizes up to 7051 bytes it is behind optimum by at most one character.
+only a function of the length of the input (not the contents). It uses
+big integer modulus operations and works in chunks of size 256 bits.
+It only encodes whole-byte inputs (not
+fractions of a byte).
 
 Performance of base62 is generally much worse than base64. This
 implementation is fairly fast, but the focus has been on optimality
 of encoding, in particular for smaller sizes, and correctness.
+
+The algorithm is close to theoretical optimum for base62 (eg if the entire
+binary content were treated as a single integer).
+
+## Background
+
+In contexts where we have restricted set of characters to
+choose from, base64 is suitable for large amounts of binary data, both for density
+and speed of encoding/decoding. However, the need to encode
+large amounts of binary data in 'printable character' format has
+become less of a concern over time, while we have had an increase in
+situations where we need to encode smaller amounts of binary data
+. The largest set of printable characters that are 
+permitted in most common contexts is alphanumerics ``[0-9A-Za-z]``.
+
+Notably, or several common smaller sizes of bit strings, optimal
+base62 encoding results in the same lengths of characters as base64.
 
     import { arrayBufferToBase62, base62ToArrayBuffer } from 'base62'
     const encoded = arrayBufferToBase62((new TextEncoder).encode('Hello World!'))
@@ -38,6 +49,11 @@ Base64 has a "sweetspot" with 192 bits (and multiples thereof such as 384) since
 log2(64) has 3 as a prime factor. But even then, for multiples of 192 up to 4x192, the
 difference is only one character.
 
+In fact, for bit lengths that are multiples of 32 (4 bytes),
+unless the bit length is also evenly divisible by 3 (in other words unless the total
+amount of data in bits is divisible by 96), then b62 and b64 result
+in the same encoding lengths for all cases shorter than 352 bits.
+
 If we look at a larger set of common key sizes (such as 128, 160, 192, 224, 256,
 320, 384, and 512) then unless they are a multiple of 192 bits (in the case of
 this list 192 and 384), encoding lengths are same.
@@ -49,6 +65,12 @@ Hence the chunking to 32 bytes or smaller. This dramatically improves performanc
 compared to larger chunks, of course, and with minimal impact on quality - in fact you would
 need to go to chunk sizes well above 512 bytes to see much difference. Conversely,
 smaller chunks lead to significantly worse encoding.
+
+Given our chunking of 256 bits, if we compare with theoretically optimal b62
+encoding, and we as above restrict input sizes
+to be a multiples of 4 bytes (32 bits), then for sizes up to 812 bytes
+(6496 bits) this algorithm is optimal, and for sizes up to 7052 bytes (56416 bits)
+it is behind optimum by at most one character.
 
 ## Issues with Base64
 
@@ -133,6 +155,7 @@ then in 2021 it was changed to 0-9A-Za-z, then some edit wars and it was
 changed back and forth a few times, eventually back to the current
 0-9a-zA-Z, at no point does the article appear to have mentioned that
 there are in fact multiple versions and no standard.
+
 
 ## History
 
