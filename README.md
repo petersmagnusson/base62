@@ -1,3 +1,5 @@
+_NOTE: this is work/design in progress, please feel free to reach out with feedback._
+
 # base62
 
 base62 (A-Za-z0-9) encoding and decoding. Typescript implementation.
