@@ -143,18 +143,18 @@ Since binary data in these encoding contexts are typically 'random',
 taking any sort of compression approach for base62 is a bit misguided.
 
 (**) 'BaseN' approaches will prefer to pick 'less ambiguous' characters,
-and in that contexts lowercase is considered preferable. Of course, base62
+and in that context, lowercase is considered preferable. Of course, base62
 is precisely the point on that continuum where both lower and upper case
 are included, and no additional symbols beyond alphanumeric. But to our
-knowledge, common 'baseN' code do not 'catch' this special case for base62.
+knowledge, common 'baseN' implementations do not 'catch' this special case for base62.
 The Base64 ordered version of Base62 is sometimes referred to as 'truncated
-'base64'. To help clarify things, Wikipedia has chimed in and kept changing
-the order of the characters in their article on base62. The first table
+base64'. To (not) help clarify things, the Wikipedia article on base62 has chimed in
+with different versions depending on the year. The first table
 added to the 'base62' article was in 2020, and that showed A-Za-z0-9.
-then in 2021 it was changed to 0-9A-Za-z, then some edit wars and it was
-changed back and forth a few times, eventually back to the current
-0-9a-zA-Z, at no point does the article appear to have mentioned that
-there are in fact multiple versions and no standard.
+Then in 2021 it was changed to 0-9A-Za-z, then some edit wars, it was
+changed back and forth a few times, currently it's showing 0-9a-zA-Z.
+At no point does the article appear to have mentioned that
+there are in fact multiple versions (and no standard).
 
 
 ## History
