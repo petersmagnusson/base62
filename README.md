@@ -138,7 +138,7 @@ to keep 'canonical' implementations for different approaches):
 ## Footnotes
   
 (*) Variable length output means that it's possible some inputs will
-result encodings that are shorter than what is 'theoretically possible'.
+result in encodings that are shorter than what is 'theoretically possible'.
 Since binary data in these encoding contexts are typically 'random',
 taking any sort of compression approach for base62 is a bit misguided.
 
