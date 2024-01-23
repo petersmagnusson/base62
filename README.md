@@ -25,8 +25,6 @@ of encoding, in particular for smaller sizes, and correctness.
     const decoded = new TextDecoder().decode(base62ToArrayBuffer(encoded))
     console.log(decoded)
 
-```
-
 The algorithm encodes and decodes data using a base62 encoding scheme, with a defined chunk size of 32 bytes. Each chunk, up to 32 bytes, is first converted into a BigInt (eg up to 2^256-1 in size), and then iteratively divided by 62 to encode it into a base62 string, zero-padded with the character representing zero in our base62 dictionary ('A'). We maintain maps (M and invM) to correlate the length of byte sequences with their corresponding base62 string lengths, and vice versa. The algorithm operates in big-endian format. It includes checks to validate the correctness of the base62 strings, ensuring they are valid outputs of the base62 encoding process.
 
 ## Efficiency (briefly)
