@@ -18,8 +18,6 @@ Performance of base62 is generally much worse than base64. This
 implementation is fairly fast, but the focus has been on optimality
 of encoding, in particular for smaller sizes, and correctness.
 
-```typescript
-
     import { arrayBufferToBase62, base62ToArrayBuffer } from 'base62'
     const encoded = arrayBufferToBase62((new TextEncoder).encode('Hello World!'))
     const decoded = new TextDecoder().decode(base62ToArrayBuffer(encoded))
