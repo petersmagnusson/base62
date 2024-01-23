@@ -86,6 +86,7 @@ to keep 'canonical' implementations for different approaches):
 * https://github.com/glowfall/base62 - variable length and non-optimal results.
   Some examples (results are formatted as bufferSize:min/avg/max):
 
+```
      16:   22 /    22.01 /   23 (optimum is   22)
      32:   43 /    43.5  /   45 (optimum is   43)
      40:   54 /    54.24 /   56 (optimum is   54)
@@ -94,6 +95,7 @@ to keep 'canonical' implementations for different approaches):
    4096: 5507 /  5519.23 / 5534 (optimum is 5504)
    6240: 8393 /  8408    / 8428 (optimum is 8385)
    5280: 7101 /  7114.5  / 7129 (optimum is 7138)
+```
 
 * https://github.com/suminb/base62
   Variable results, not guaranteed optimal. For example, byte length 32
