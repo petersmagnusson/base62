@@ -2,7 +2,7 @@ _NOTE: this is work/design in progress, please feel free to reach out with feedb
 
 # base62
 
-base62 ``[0-9A-Za-z]`` encoding and decoding. Typescript implementation.
+base62 ``[A-Za-z0-9]`` encoding and decoding. Typescript implementation.
 
 This algorithm has no restrictions on the input. The resulting length is
 only a function of the length of the input (not the contents). It uses
@@ -24,19 +24,21 @@ choose from, base64 is suitable for large amounts of binary data, both for densi
 and speed of encoding/decoding. However, the need to encode
 large amounts of binary data in 'printable character' format has
 become less of a concern over time, while we have had an increase in
-situations where we need to encode smaller amounts of binary data
-. The largest set of printable characters that are 
-permitted in most common contexts is alphanumerics ``[0-9A-Za-z]``.
+situations where we need to encode smaller amounts of binary data.
+The largest set of printable characters that are 
+permitted in most common contexts is alphanumerics.
 
-Notably, or several common smaller sizes of bit strings, optimal
+Notably, for several common smaller sizes of bit strings, optimal
 base62 encoding results in the same lengths of characters as base64.
+
+Usage:
 
     import { arrayBufferToBase62, base62ToArrayBuffer } from 'base62'
     const encoded = arrayBufferToBase62((new TextEncoder).encode('Hello World!'))
     const decoded = new TextDecoder().decode(base62ToArrayBuffer(encoded))
     console.log(decoded)
 
-The algorithm encodes and decodes data using a base62 encoding scheme, with a defined chunk size of 32 bytes. Each chunk, up to 32 bytes, is first converted into a BigInt (eg up to 2^256-1 in size), and then iteratively divided by 62 to encode it into a base62 string, zero-padded with the character representing zero in our base62 dictionary ('A'). We maintain maps (M and invM) to correlate the length of byte sequences with their corresponding base62 string lengths, and vice versa. The algorithm operates in big-endian format. It includes checks to validate the correctness of the base62 strings, ensuring they are valid outputs of the base62 encoding process.
+The algorithm encodes and decodes data using a base62 encoding scheme, with a defined chunk size of 32 bytes. Each chunk, up to 32 bytes, is first converted into a BigInt (eg up to 2^256-1 in size), and then iteratively divided by 62 to encode it into a base62 string, zero-padded with the character representing zero in our base62 dictionary ('A'). We maintain maps (M and invM) to correlate the length of byte sequences with their corresponding base62 string lengths, and vice versa. The algorithm operates in big-endian format. It includes checks to validate the correctness of the base62 strings, ensuring they are valid outputs of the same base62 encoding process.
 
 ## Efficiency (briefly)
 
@@ -86,7 +88,8 @@ Differences include:
 * The character set used, or rather, the order of the characters. Unfortunately,
   four variations are in circulation: Base64 ordering (A-Za-z0-9), lexicographic
   (ASCII) order (0-9A-Za-z), "BaseN" (**) ordering (0-9a-zA-Z), and finally
-  but least commonly (a-zA-Z0-9).
+  but least commonly (a-zA-Z0-9). We chose 'Base64 ordering' to be aligned
+  with the base64 standard.
 
 * Many "base62" implementations only encode a number, not an arbitrary
   binary object.
