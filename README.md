@@ -5,10 +5,11 @@ _NOTE: this is work/design in progress, please feel free to reach out with feedb
 base62 ``[A-Za-z0-9]`` encoding and decoding. Typescript implementation.
 
 This algorithm has no restrictions on the input. The resulting length is
-only a function of the length of the input (not the contents). It uses
-big integer modulus operations and works in chunks of size 256 bits.
-It only encodes whole-byte inputs (not
-fractions of a byte).
+only a function of the length of the input (not the contents). It works
+with whole bytes only, using integer modulus operations, in big-endian order,
+and default chunk size is 32 bytes. Default character set is base64
+compatible ``[A-Za-z0-9]``. Both chunk size and choice of character set 
+can be configured.
 
 Performance of base62 is generally much worse than base64. This
 implementation is fairly fast, but the focus has been on optimality
@@ -16,6 +17,8 @@ of encoding, in particular for smaller sizes, and correctness.
 
 The algorithm is close to theoretical optimum for base62 (eg if the entire
 binary content were treated as a single integer).
+
+TypeScript 3.2 / ECMAScript 2015 (ES6) or later.
 
 ## Background
 
