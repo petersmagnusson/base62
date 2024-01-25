@@ -49,7 +49,7 @@ are interspersed with a quickly diminishing supply of symbols:
 The first (#32, "space") is excluded quickly from any encoding format,
 and the symbols '"' (#34 or DQUOTE), '(' (#40), ')' (#41), ',' (#44),
 '.' (#46), ':' (#58), ';' (#59), '<' (#60), '>' (#62), '@' (#64),
-'[' (#91), '\' (#92), and ']' (#93) are all grabbed by RFC 822/2822, for
+'[' (#91), '\\' (#92), and ']' (#93) are all grabbed by RFC 822/2822, for
 a total of 14 absorbed back in the day when there seemed to be an infinite
 supply of symbols. Not counting '"' (DQUOTE), these are called "specials" in
 RFC 822/2822. Some of these can be, and are, resurrected.
@@ -80,9 +80,9 @@ symbol such as '£' (#163) for British pounds, but in other cases,
 
 So for these reasons, symbols like '^' (#94), '`' (#96), and '~' (#126)
 were in practice excluded from "reuse". Similarly, '{' (#123), '|' (#124),
-'}' (#125), '[' (#91), '\' (#92), and ']' (#93) were excluded from
+'}' (#125), '[' (#91), '\\' (#92), and ']' (#93) were excluded from
 "reuse" as they were often used for 'national' characters, for example
-in Swedish keyboards, layouts would map "åÅäÄöÖ" to "{}[]|\". So a Swedish
+in Swedish keyboards, layouts would map "åÅäÄöÖ" to "{}[]|\\". So a Swedish
 programmer had to switch keyboard mode to go between programming and
 writing emails.
 
@@ -107,7 +107,7 @@ diacriticals. (Of course, '#' itself is one such character.)
 The first (#32, "space") is excluded quickly from any encoding format,
 and the symbols '"' (#34 or DQUOTE), '(' (#40), ')' (#41), ',' (#44),
 '.' (#46), ':' (#58), ';' (#59), '<' (#60), '>' (#62), '@' (#64),
-'[' (#91), '\' (#92), and ']' (#93) are absorbed back in the day.
+'[' (#91), '\\' (#92), and ']' (#93) are absorbed back in the day.
 Not counting '"' (DQUOTE), these are called "specials" in
 RFC 822/2822. Some of these would be resurrected.
 
@@ -147,7 +147,7 @@ references.
 
 The language issues were of course intimately understood by the WWW pioneers,
 since they were literally based in Geneva. In RFC 1630 the category 'national'
-thus includes '{', '}', '|' (VLINE), '[', ']', '\', '^', and '~'. Though
+thus includes '{', '}', '|' (VLINE), '[', ']', '\\', '^', and '~'. Though
 they don't seem to have been money grubbers so they ignored dual use of '#'.
 
 So to summarize at this point:
@@ -170,7 +170,7 @@ by convention includes the underscore but not '-'. The origin for this
 distinction, in turn, is that the underscore is used in programming languages
 as a valid character in identifiers, which thus make up "words" in the context
 of programming, whereas '-' is not, since that's an operator (minus) and a
-math symbol, whereas '_' had no real corresponding convention in writing.
+math symbol, whereas '\_' had no real corresponding convention in writing.
 
 But of course strict standard-based base64 decoders do not accept 'base64url'.
 Yet because of the above issues, newer standards have been forced to
