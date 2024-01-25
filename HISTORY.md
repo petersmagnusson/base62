@@ -1,6 +1,6 @@
 # Some History
 
-(Still researching this, apologies for errors and omissions.)
+_Under Development. Still researching this, apologies for errors and omissions_
 
 A (very) brief history. Base64 as defined today (RFC 4648) traces back to
 Privacy Enhanced Mail (PEM) in the early 1990s, which therefore predates
