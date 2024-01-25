@@ -200,6 +200,8 @@ So, yeah, base62 comes in handy.
   
 ## References
 
+* <https://ecma-international.org/wp-content/uploads/ECMA-1_1st_edition_march_1963.pdf> April 1963, ECMA-1
+
 * <https://datatracker.ietf.org/doc/html/rfc822> August 1982
 * <https://datatracker.ietf.org/doc/html/rfc1341> June 1992
 * <https://datatracker.ietf.org/doc/html/rfc1630> June 1994
