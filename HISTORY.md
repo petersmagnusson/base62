@@ -1,4 +1,4 @@
-# Some History
+# Some History on Encoding
 
 _Under Development. Still researching this, apologies for errors and omissions_
 
