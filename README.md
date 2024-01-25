@@ -77,7 +77,7 @@ this list 192 and 384), encoding lengths are same.
 This is because, curiously, 43xlog2(62) is 256.03, an inefficiency of only 1/8000,
 whereas 43xlog2(64) is 258.00, an inefficiency of 1/64, allowing b62 to "catch up".
 
-Hence the decault chunking of 32 bytes. This dramatically improves performance
+Hence the default chunking of 32 bytes. This dramatically improves performance
 compared to larger chunks, with minimal impact on quality. In fact you would
 need to go to chunk sizes well above 512 bytes to see much difference. Conversely,
 smaller chunks lead to significantly worse encoding.
