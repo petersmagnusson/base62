@@ -173,9 +173,25 @@ as a valid character in identifiers, which thus make up "words" in the context
 of programming, whereas '-' is not, since that's an operator (minus) and a
 math symbol, whereas '\_' had no real corresponding convention in writing.
 
-But of course strict standard-based base64 decoders do not accept 'base64url'.
+But of course standard-based base64 decoders do not accept 'base64url'.
 Yet because of the above issues, newer standards have been forced to
 use 'base64URL' instead of 'base64', eg JSON Web Token (JWT, RFC 7519).
+And notably in javascript and web pages, things like btoa(), atob(), and
+Data URLs work with standard base64 not base64url. Instead, encodeURIcomponent()
+provides percentage escaping of all characters except:
+
+```
+A–Z a–z 0–9 - _ . ! ~ * ' ( )
+```
+
+Which safeguards any string of characters ... except for a www form
+submission spaces should be "+" and "%20" needs to be post-recoded to "+".
+
+And of course IPv6 URI syntax reserves "[" and "]".
+
+And the newest URI standard (RFC 3986) reserves ''! ' ( ) *'' ...
+
+So, yeah, base62 comes in handy.
   
 ## References
 
