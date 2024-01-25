@@ -160,8 +160,8 @@ So to summarize at this point:
 
 So standards for "content" collide with standards for "addressing" (*).
 
-This gives birth to Base64URL, which replaces '+' with '-', and '/' with '_'.
-Note that '_' is not ideal, since it was used as national character. But
+This gives birth to Base64URL, which replaces '+' with '-', and '/' with '\_'.
+Note that '\_' is not ideal, since it was used as national character. But
 it was the least bad.
 
 The final collision is with graphical user interfaces, in particular smaller
