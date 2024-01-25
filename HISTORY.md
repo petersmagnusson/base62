@@ -123,6 +123,11 @@ the same in ASCII and IA5, we are left with just these symbols:
 
 PEM picked their 64-character subset from this - the alphanumerics are
 identical in ASCII and IA5, and then they grabbed '/', '+', and '='.
+I have not been able to find documentation on why these choices in
+particular. But dating back to at least ECMA-1 (1963, see references)
+and 6-bit character sets, the only unambiguous symbols were ''( ) * + , - /'',
+and '=' and '%' were interchangeable so either could serve as padding
+(back then). 
 
 Moving on. With MIME (RFC 1341) we get "tspecials" which are the specials
 plus '/' (#47), '?' (#63), and '=' (#61).
