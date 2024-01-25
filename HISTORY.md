@@ -166,7 +166,8 @@ it was the least bad.
 
 The final collision is with graphical user interfaces, in particular smaller
 devices like phones and tablets. Double-clicking will select a "word", which
-by convention includes the underscore but not '-'. The origin for this
+by convention includes the underscore '\_' but not '-', so double tapping on
+a base64url would absorb one of the symbols, but not both. The origin for this
 distinction, in turn, is that the underscore is used in programming languages
 as a valid character in identifiers, which thus make up "words" in the context
 of programming, whereas '-' is not, since that's an operator (minus) and a
