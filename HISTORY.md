@@ -15,14 +15,15 @@ and punched tape, respectively.)
 
 You've probably seen things like this:
 
-```text
+```
 -----BEGIN ENCRYPTED PRIVATE KEY-----
 MIHNMEAGCSqGSIb3DQEFDTAzMBsGCSqGSIb3DQEFDDAOBAghhICA6T/51QICCAAw
 FAYIKoZIhvcNAwcECBCxDgvI59i9BIGIY3CAqlMNBgaSI5QiiWVNJ3IpfLnEiEsW
 Z0JIoHyRmKK/+cr9QPLnzxImm0TR9s4JrG3CilzTWvb0jIvbG3hu0zyFPraoMkap
 8eRzWsIvC5SVel+CSjoS2mVS87cyjlD+txrmrXOVYDE+eTgMLbrLmsWh3QkCTRtF
 QC7k0NNzUHTV9yGDwfqMbw==
------END ENCRYPTED PRIVATE KEY-----
+-----END ENCRYPTED PRIVATE KEY----
+```
 
 That's a PKCS#8 private key encoded in PEM format (RFC 7468); similarly
 for things like X.509 (PKIX) and S/MIME (CMS) certificates, and so on.
@@ -39,7 +40,7 @@ first 32 characters, and the last character was DEL (127). The rest
 were "printable" characters (32-126). The alphanumerics (0-9A-Za-z)
 are interspersed with a quickly diminishing supply of symbols:
 
-```text
+```
  !"#$%&'()*+,-./0123456789:;<=>?
 @ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_
 `abcdefghijklmnopqrstuvwxyz{|}~
@@ -92,7 +93,7 @@ Below I'm using '#' to indicate all these "national" characters, either
 because they are undefined in IA5, or because they are used for
 diacriticals. (Of course, '#' itself is one such character.)
 
-```text
+```
     IA5 character set
        0 1 2 3 4 5 6 7 8 9 A B C D E F
     2x   ! # # # % & # ( ) * + # - . /
@@ -101,7 +102,7 @@ diacriticals. (Of course, '#' itself is one such character.)
     5x P Q R S T U V W X Y Z # # # # #
     6x # a b c d e f g h i j k l m n o
     7x p q r s t u v w x y z # # # #
-``
+```
 
 The first (#32, "space") is excluded quickly from any encoding format,
 and the symbols '"' (#34 or DQUOTE), '(' (#40), ')' (#41), ',' (#44),
@@ -116,7 +117,7 @@ string delimeters of various types.
 If we exclude RFC 822 "specials" from the characters that are encoded
 the same in ASCII and IA5, we are left with just these symbols:
 
-```text
+```
    ! % & * + - / = ?
 ```
 
@@ -151,7 +152,7 @@ they don't seem to have been money grubbers so they ignored dual use of '#'.
 
 So to summarize at this point:
 
-```text
+```
    symbols = "!" | "%" | "&" | "*" | "+" | "-" | "/" | "=" | "?"
    base64  =                         "+" |       "/" | "="
    URI     = "!" | "%" | "&" | "*" | "+" |     | "/" | "=" | "?"
