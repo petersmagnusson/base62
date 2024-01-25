@@ -1,4 +1,4 @@
-# Some History on Encoding
+# A Short History of Encoding and Base64
 
 _Still researching this, apologies for errors and omissions_
 
