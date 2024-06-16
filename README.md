@@ -90,12 +90,62 @@ it is behind optimum by at most one character.
 
 ## Issues with Base64
 
-TBW.
+Base64 is the main standard for encoding binary data in printable format.
+There are only 62 alphanumeric (A-Za-z0-9) characters, so any base64
+design needs to pick two symbols. For historical reasons (see the separate
+"HISTORY.md" document), Base64 uses '+' and '/', and '=' for padding.
+
+Unfortunately, these choices predate the World Wide Web. Uniform Resource
+Identifiers (URIs) reserve all of those symbols. Base64 can work without '=',
+but URIs reserve '+' for spaces and '/' for path separators.
+
+This leads to Base64URL, which uses '-' and '_' instead of '+' and '/',
+allowing the encoding to be used in URIs. But this is not a standard,
+so for example, web APIs like atob() and btoa() in browsers do not support
+Base64URL. Conversely, JWT (JSON Web Tokens), which itself is a standard,
+uses Base64URL.
+
+This in turn leads to things like encodeURIComponent() and decodeURIComponent()
+being applied to Base64 tokens - sometimes. This bridging between Base64
+and Base64URL depending on context, or wrapping on or the other, is a constant
+source of bugs and confusion.
+
+Historically, binary-data-as-readable-string was something that occurred
+"internally" in systems, for example to handle arbitrary binary attachments
+to email. But with the rise of various cryptographic features, items
+like tokens and keys often parts of "text" that an end-user is directly
+manipulating - copying, pasting, etc.
+
+Whereas the earlier issues mostly impact developers, the
+symbols '-' and '_' introduce issues for users. Especially on
+mobile devices, "selecting" parts of text can be difficult. The symbols '-' and '_'
+are treated differently: '-' is generally treated as a word separator,
+whereas '_' is not. Thus, for example, a 256-bit value encoded as Base64URL
+may or may not include '-', in fact it's about a 50/50 chance. So half the time
+a user needs to copy-paste such a token, they can just double-tap to select
+all of the characters, and about half the time they can't.
+
+Base62 has always existed as an option, but since it amounts to encoding
+using fractional bits, it has two challenges: it is likely to be much
+slower, and there are corner cases that would require general agreement.
+
+Two things have changed in recent years. First, BigInt support is now
+pervasive in programming languages, so can be viewed as a primitive
+in any common environment, and for the situations where end-users are
+directly invovled, by definition the amount of data is small.
+Secondly, the universe of encodings have
+been so expanded, that, increasingly, environments have ways of expressing
+what encoding is being used (e.g. https://github.com/multiformats/multibase).
+
+So it would seem that the obvious approach is to use Base64 wherever it
+involves large amounts of data, and Base64URL wherever interoperability
+with standards like JWT is required, and Base62 for anything that is
+exposed to end-users. 
 
 ## Other Implementations
 
 Unfortunately, there is no standard for base62, so various implementations
-that are in circulation are not compatible.
+that are in circulation are often not compatible.
 
 Differences include:
 
