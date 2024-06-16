@@ -229,8 +229,4 @@ there are in fact multiple versions (and no standard).
 
 ## History
 
-Separate document will be added.
-
-## References
-
-To be added.
+See the separate HISTORY document.
