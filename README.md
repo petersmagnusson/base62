@@ -117,12 +117,13 @@ Differences include:
   for base62 (at least from the limited testing we've done).
 
 Implementations we are currently looking at for comparison include
-(this list will grow as we find more, then hopefully curated down
-to keep 'canonical' implementations for different approaches):
+the below. This list will grow as we find more, then hopefully curated down
+to keep 'canonical' implementations for different approaches. Let us
+know what we're missing. Principal programming language is in parentheses.
 
-* https://github.com/marksalpeter/token/tree/master/v2 - token/uin64 only
+* (Go) https://github.com/marksalpeter/token/tree/master/v2 - token/uin64 only
 
-* https://github.com/glowfall/base62 - variable length and non-optimal results.
+* (Java) https://github.com/glowfall/base62 - variable length and non-optimal results.
   Some examples (results are formatted as bufferSize:min/avg/max):
 
 ```
@@ -136,19 +137,21 @@ to keep 'canonical' implementations for different approaches):
    5280: 7101 /  7114.5  / 7129 (optimum is 7138)
 ```
 
-* https://github.com/suminb/base62
+* (Python) https://github.com/suminb/base62
   Variable results, not guaranteed optimal. For example, byte length 32
   results in 42, 43, or 44 characters.
 
-* https://github.com/keybase/saltpack/tree/master/encoding/basex
+* (Go) https://github.com/keybase/saltpack/tree/master/encoding/basex
 
-* https://github.com/eknkc/basex
+* (Go) https://github.com/eknkc/basex
 
-* https://github.com/KvanTTT/BaseNcoding
+* (C# and Javascript) https://github.com/KvanTTT/BaseNcoding
 
-* https://github.com/seruco/base62
+* (Java) https://github.com/seruco/base62
 
-* https://github.com/jxskiss/base62
+* (Go) https://github.com/jxskiss/base62
+
+* (Rust) https://github.com/fbernier/base62
 
 
 
