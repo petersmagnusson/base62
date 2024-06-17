@@ -178,8 +178,8 @@ know what we're missing. Principal programming language is in parentheses.
 
 * (Go) https://github.com/marksalpeter/token/tree/master/v2 - token/uin64 only
 
-* (Java) https://github.com/glowfall/base62 - variable length and non-optimal results.
-  Some examples (results are formatted as bufferSize:min/avg/max):
+* (Java) https://github.com/glowfall/base62 - base64 ordering, variable length
+  with non-optimal results. Some examples (results are formatted as bufferSize:min/avg/max):
 
 ```
      16:   22 /    22.01 /   23 (optimum is   22)
