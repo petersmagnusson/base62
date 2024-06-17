@@ -205,9 +205,6 @@ know what we're missing. Principal programming language is in parentheses.
 
 * (C# and Javascript) https://github.com/KvanTTT/BaseNcoding
 
-* (Java) https://github.com/glowfall/base62
-  Uses variable length encoding Base64 ordering.
-
 * (Java) https://github.com/seruco/base62
 
 * (Go) https://github.com/jxskiss/base62
