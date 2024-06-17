@@ -2,7 +2,7 @@ _NOTE: this is work/design in progress, please feel free to reach out with feedb
 
 # base62
 
-base62 ``[A-Za-z0-9]`` encoding and decoding. Typescript implementation.
+base62 ``[A-Za-z0-9]`` encoding and decoding. Typescript and Go versions.
 
 This algorithm has no restrictions on the input. The resulting length is
 only a function of the length of the input (not the contents). It works
@@ -19,6 +19,11 @@ The algorithm is close to theoretical optimum for base62 (eg if the entire
 binary content were treated as a single integer).
 
 TypeScript 3.2 / ECMAScript 2015 (ES6) or later.
+
+Please note that the Go version is a direct translation of the TypeScript,
+happy to take PRs to improve it.
+
+I plan to add a Rust version.
 
 ## Background
 
