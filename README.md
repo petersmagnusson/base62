@@ -158,7 +158,7 @@ Differences include:
   four variations are in circulation: Base64 ordering (A-Za-z0-9), lexicographic
   (ASCII) order (0-9A-Za-z), "BaseN" (**) ordering (0-9a-zA-Z), and finally
   but least commonly (a-zA-Z0-9). We chose 'Base64 ordering' to be aligned
-  with the base64 standard.
+  with the base64 standard (e.g. A-Za-z0-9).
 
 * Many "base62" implementations only encode a number, not an arbitrary
   binary object.
@@ -199,12 +199,19 @@ know what we're missing. Principal programming language is in parentheses.
 * (Go) https://github.com/keybase/saltpack/tree/master/encoding/basex
 
 * (Go) https://github.com/eknkc/basex
+  Generic base. A port of https://github.com/cryptocoinjs/base-x (from JavaScript),
+  which in turn is a derivation of bitcoin/src/base58.cpp (generalized for variable alphabets).
+  For base62 uses (0-9a-zA-Z).
 
 * (C# and Javascript) https://github.com/KvanTTT/BaseNcoding
+
+* (Java) https://github.com/glowfall/base62
+  Uses variable length encoding Base64 ordering.
 
 * (Java) https://github.com/seruco/base62
 
 * (Go) https://github.com/jxskiss/base62
+  Inspired by glowfall. Variadic length encoding, not optimal but avoids bigint.
 
 * (Rust) https://github.com/fbernier/base62
 
@@ -215,7 +222,10 @@ know what we're missing. Principal programming language is in parentheses.
 (*) Variable length output means that it's possible some inputs will
 result in encodings that are shorter than what is 'theoretically possible'.
 Since binary data in these encoding contexts are typically 'random',
-taking any sort of compression approach for base62 is a bit misguided.
+taking any sort of compression approach for base62 doesn't lead to
+any benefits on efficiency (to the contrary), but allows for faster algorithms.
+A common approach is a sliding mask to decide on encoding either five
+bits or six bits at a time.
 
 (**) 'BaseN' approaches will prefer to pick 'less ambiguous' characters,
 and in that context, lowercase is considered preferable. Of course, base62
