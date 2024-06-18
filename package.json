@@ -13,6 +13,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "deno test --allow-read"
+    "test:typescript": "deno test --allow-read",
+    "test:rust": "cd rust && cargo test",
+    "test:go": "cd go && go test"
   }
 }

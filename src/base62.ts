@@ -32,6 +32,8 @@ export { base62, b62regex, base62b64, base62lex, base62baseN };
 
 const N = 32; // max chunk size, design point. 
 
+// maps are used to track resulting chunk sizes; "M" is needed when encoding,
+// and "invM" is needed when decoding.
 const M = new Map<number, number>(), invM = new Map<number, number>();
 for (let X = 1; X <= N; X++) {
   const Y = Math.ceil((X * 8) / Math.log2(62));
@@ -77,7 +79,7 @@ function _base62ToArrayBuffer(s: string, t: number, b62 = base62): Uint8Array {
 
 /** Converts a base62 string to matching ArrayBuffer. */
 export function base62ToArrayBuffer(s: string, b62 = base62): ArrayBuffer {
-  if (!b62regex.test(s)) throw new Error('base62ToArrayBuffer32: must be alphanumeric.');
+  if (!b62regex.test(s)) throw new Error('Invalid Base62 string.');
   try {
     let j = 0, result = new Uint8Array(s.length * 6 / 8); // we know we're less than 6
     for (let i = 0, c, newBuf; i < s.length; i += c, j += newBuf.byteLength) {
