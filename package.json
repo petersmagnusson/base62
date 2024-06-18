@@ -12,9 +12,9 @@
     "typescript": "^5.3.3"
   },
   "scripts": {
-    "build": "tsc",
-    "test:typescript": "deno test --allow-read",
+    "test:typescript": "tsc && deno test --allow-read",
     "test:rust": "cd rust && cargo test",
-    "test:go": "cd go && go test"
+    "test:go": "cd go && go test",
+    "test": "npm run test:typescript && npm run test:rust && npm run test:go"
   }
 }
