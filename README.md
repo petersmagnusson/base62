@@ -1,6 +1,7 @@
-# base62. Arbitrary inputs, deterministic and close to optimal output. Typescript, Go, and Rust versions.
+# base62 reference implementation
 
-base62 ``[A-Za-z0-9]`` encoding and decoding. Extensive test suite.
+base62 ``[A-Za-z0-9]`` encoding and decoding. Typescript, Go, and Rust versions.
+Extensive test suite.
 
 This algorithm has no restrictions on the input. The resulting length is
 only a function of the length of the input (not the contents). It works
