@@ -10,9 +10,9 @@ and default chunk size is 32 bytes. Default character set is base64
 compatible ``[A-Za-z0-9]``. Both chunk size and choice of character set 
 can be configured.
 
-Performance of base62 is generally much worse than base64. This
-implementation is fairly fast, but the focus has been on optimality
-of encoding, in particular for smaller sizes, and correctness.
+Performance of base62 is generally worse than base64. This
+implementation is fast as base62 systems go, but the focus has been on quality
+of encoded results, in particular for smaller sizes, and correctness.
 
 The algorithm is close to theoretical optimum for base62 (eg if the entire
 binary content were treated as a single integer).
