@@ -1,9 +1,19 @@
 # base62 reference implementation
 
-base62 ``[A-Za-z0-9]`` encoding and decoding. Typescript, Go, and Rust versions
-(let us know what you need next). Extensive test suite.
+base62 ``[A-Za-z0-9]`` encoding and decoding. Base62 remedies a few issues that
+we've learned about base64 over the years (see below). 
 
-This algorithm has no restrictions on the input. The resulting length is
+Reference implementation with extensive test suite in TypeScript 3.2 / ECMAScript 2015 (ES6) or later.
+Please note that the Go and Rust versions are more or less direct AI translations
+of the TypeScript. Please open an issue if you need these improved or if you
+need other programming language versions.
+
+    import { arrayBufferToBase62, base62ToArrayBuffer } from 'base62'
+    const encoded = arrayBufferToBase62((new TextEncoder).encode('Hello World!'))
+    const decoded = new TextDecoder().decode(base62ToArrayBuffer(encoded))
+    console.log(decoded)
+
+This algorithm has no restrictions on the input size. The resulting length is
 only a function of the length of the input (not the contents). It works
 with whole bytes only, using integer modulus operations, in big-endian order,
 and default chunk size is 32 bytes. Default character set is base64
@@ -15,32 +25,24 @@ implementation is fast as base62 systems go, but the focus has been on quality
 of encoded results, in particular for smaller sizes, and correctness.
 
 The algorithm is close to theoretical optimum for base62 (eg if the entire
-binary content were treated as a single integer).
+binary content were treated as a single integer). Notably, for several common
+smaller sizes of bit strings, optimal base62 encoding results in the same
+lengths as base64.
 
-Reference implementation is in TypeScript 3.2 / ECMAScript 2015 (ES6) or later.
-Please note that the Go and Rust versions are more or less direct AI translations
-of the TypeScript. Happy to take PRs to improve them.
+
 
 ## Background
 
-In contexts where we have restricted set of characters to
+In contexts where we have a restricted set of characters to
 choose from, base64 is suitable for large amounts of binary data, both for density
 and speed of encoding/decoding. However, the need to encode
 large amounts of binary data in 'printable character' format has
 become less of a concern over time, while we have had an increase in
-situations where we need to encode smaller amounts of binary data.
+situations where we need to encode small amounts of binary data that are
+then directly handled by humans (copy-pasted, or printed, or outright memorized).
+
 The largest set of printable characters that are 
-permitted in most common contexts is alphanumerics.
-
-Notably, for several common smaller sizes of bit strings, optimal
-base62 encoding results in the same lengths of characters as base64.
-
-Usage:
-
-    import { arrayBufferToBase62, base62ToArrayBuffer } from 'base62'
-    const encoded = arrayBufferToBase62((new TextEncoder).encode('Hello World!'))
-    const decoded = new TextDecoder().decode(base62ToArrayBuffer(encoded))
-    console.log(decoded)
+almost uniformly permitted are the 62 alphanumerics (``[A-Za-z0-9]``).
 
 The algorithm encodes and decodes data using a base62 encoding scheme,
 with a preferred chunk size of 32 bytes. Each chunk is
@@ -53,7 +55,8 @@ operates in big-endian format. It includes checks to validate the correctness
 of the base62 strings, ensuring they are valid outputs of the same base62
 encoding process.
 
-As noted above, both chunk size and choice of character set is easily modified.
+Both chunk size and choice of character set is easily modified (there are
+a handful of incompatible choices for character set, see below).
 
 ## Efficiency (briefly)
 
