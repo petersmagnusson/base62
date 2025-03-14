@@ -17,10 +17,9 @@ of encoding, in particular for smaller sizes, and correctness.
 The algorithm is close to theoretical optimum for base62 (eg if the entire
 binary content were treated as a single integer).
 
-TypeScript 3.2 / ECMAScript 2015 (ES6) or later.
-
-Please note that the Go and Rust versions are direct translations of the TypeScript.
-Happy to take PRs to improve them.
+Reference implementation is in TypeScript 3.2 / ECMAScript 2015 (ES6) or later.
+Please note that the Go and Rust versions are more or less direct AI translations
+of the TypeScript. Happy to take PRs to improve them.
 
 ## Background
 
