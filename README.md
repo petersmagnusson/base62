@@ -1,7 +1,7 @@
 # base62 reference implementation
 
-base62 ``[A-Za-z0-9]`` encoding and decoding. Typescript, Go, and Rust versions.
-Extensive test suite.
+base62 ``[A-Za-z0-9]`` encoding and decoding. Typescript, Go, and Rust versions
+(let us know what you need next). Extensive test suite.
 
 This algorithm has no restrictions on the input. The resulting length is
 only a function of the length of the input (not the contents). It works
